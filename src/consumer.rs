@@ -2,17 +2,21 @@ use rdkafka::{ClientConfig, Message};
 use rdkafka::consumer::{CommitMode, Consumer, StreamConsumer};
 
 pub async fn start() {
+    println!("страт копсьюмер старт");
+
     let consumer = create();
     consume(consumer).await
 }
 
 fn create() -> StreamConsumer {
+    println!("старт консьюмер креате");
+
     let mut  binding = ClientConfig::new();
     let config = binding
-        .set("bootstrap.servers", "localhost:9092")
+        .set("bootstrap.servers", "localhost:29092, localhost:29093, localhost:29094")
         .set("auto.offset.reset", "earliest")
         .set("group.id", "test-group")
-        .set("socket.timeout.ms", "3000");
+        .set("socket.timeout.ms", "4000");
 
     let consumer = config.create().expect("Ошибка создания консьюмера");
 
@@ -20,6 +24,8 @@ fn create() -> StreamConsumer {
 }
 
 async fn consume(consumer: StreamConsumer) {
+    println!("старт консьюмер консум");
+
     consumer.subscribe(&["test-topic"]).expect("не удалось подписаться на топик");
 
     loop {
