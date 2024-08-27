@@ -12,7 +12,7 @@ fn create() -> StreamConsumer {
         .set("bootstrap.servers", "localhost:29092, localhost:29093, localhost:29094")
         .set("auto.offset.reset", "earliest")
         .set("group.id", "test-group")
-        .set("socket.timeout.ms", "4000");
+        .set("socket.timeout.ms", "2000");
 
     let consumer = config.create().expect("Ошибка создания консьюмера");
 
