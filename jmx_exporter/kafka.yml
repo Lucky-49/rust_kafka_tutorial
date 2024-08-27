@@ -1,0 +1,20 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+rules:
+  - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\d*><>Count"
+    name: "kafka_server_$1_$2_total"
+    help: "Kafka server request $1 $2 total"
+    type: COUNTER
+  - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\d*><>OneMinuteRate"
+    name: "kafka_server_$1_$2_rate_1m"
+    help: "Kafka server request $1 $2 rate per minute"
+    type: GAUGE
+  - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\d*><>FiveMinuteRate"
+    name: "kafka_server_$1_$2_rate_5m"
+    help: "Kafka server request $1 $2 rate per 5 minutes"
+    type: GAUGE
+  - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\d*><>FifteenMinuteRate"
+    name: "kafka_server_$1_$2_rate_15m"
+    help: "Kafka server request $1 $2 rate per 15 minutes"
+    type: GAUGE

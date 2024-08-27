@@ -2,7 +2,7 @@ version: '3'
 
 services:
   zookeeper1:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.7.0
     container_name: zookeeper1
     ports:
       - "2181:2181"
@@ -13,9 +13,10 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
+    restart: always
 
   zookeeper2:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.7.0
     container_name: zookeeper2
     ports:
       - "2182:2181"
@@ -26,9 +27,10 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
+    restart: always
 
   zookeeper3:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.7.0
     container_name: zookeeper3
     ports:
       - "2183:2181"
@@ -39,9 +41,10 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
+    restart: always
 
   kafka1:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.7.0
     container_name: kafka1
     depends_on:
       - zookeeper1
@@ -56,12 +59,17 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7071:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9092:9092"
       - "29092:29092"
+      - "7071:7071"  # Порт для JMX Exporter
+    volumes:
+      - ./jmx_exporter:/usr/share/jmx_exporter
+    restart: always
 
   kafka2:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.7.0
     container_name: kafka2
     depends_on:
       - zookeeper1
@@ -76,12 +84,17 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7072:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9093:9093"
       - "29093:29093"
+      - "7072:7072"  # Порт для JMX Exporter
+    volumes:
+      - ./jmx_exporter:/usr/share/jmx_exporter
+    restart: always
 
   kafka3:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.7.0
     container_name: kafka3
     depends_on:
       - zookeeper1
@@ -96,9 +109,36 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7073:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9094:9094"
       - "29094:29094"
+      - "7073:7073"  # Порт для JMX Exporter
+    volumes:
+      - ./jmx_exporter:/usr/share/jmx_exporter
+    restart: always
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.8.0
+    container_name: kafka_exporter
+    command:
+      - "--kafka.server=kafka1:9092"
+      - "--kafka.server=kafka2:9093"
+      - "--kafka.server=kafka3:9094"
+    ports:
+      - "9308:9308"
+    environment:
+      KAFKA_SERVER: "kafka1:9092,kafka2:9093,kafka3:9094" # Адреса Kafka-брокера
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
 
 networks:
   default:
