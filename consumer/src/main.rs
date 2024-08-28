@@ -1,6 +1,5 @@
 use rdkafka::{ClientConfig, Message};
 use rdkafka::consumer::{CommitMode, Consumer, StreamConsumer};
-use tokio_stream::StreamExt;
 
 #[tokio::main]
 async fn main() {
