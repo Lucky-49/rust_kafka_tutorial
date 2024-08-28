@@ -14,6 +14,10 @@ Producer и Consumer запускается в отдельных термина
 
 Grafana просматривается на 127.0.0.1:3000
 
+При первом замуске Grafana вводим username/password admin/admin. Будет предложена смена пароля. Далее переходим на вкладку Connections -> Add
+![image](https://github.com/user-attachments/assets/305e3b11-097b-48ac-943c-ed2c0abd33c9)
+
+
 При подключении Grafana к Prometheus используем http://<container_name_prometheus>:9090
 
 В dashboard Grafana загружаем ID 7589
