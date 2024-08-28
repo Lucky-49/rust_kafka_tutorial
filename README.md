@@ -18,12 +18,14 @@ Grafana просматривается на 127.0.0.1:3000
 ![image](https://github.com/user-attachments/assets/305e3b11-097b-48ac-943c-ed2c0abd33c9)
 ![image](https://github.com/user-attachments/assets/ac0d99f3-70b4-45b6-abb3-9a28efdf6a30)
 ![image](https://github.com/user-attachments/assets/ba1a0864-bf52-41de-a225-dc4508092c15)
-![image](https://github.com/user-attachments/assets/b651867f-3d8b-48f5-9ea8-3c2096894706)
-
 
 При подключении Grafana к Prometheus используем http://<container_name_prometheus>:9090
+
+![image](https://github.com/user-attachments/assets/b651867f-3d8b-48f5-9ea8-3c2096894706)
 ![image](https://github.com/user-attachments/assets/cb387a66-f4eb-4cf6-a7c8-a8dbf414e78d)
 
 В dashboard Grafana загружаем ID 7589
+
+![image](https://github.com/user-attachments/assets/5442c349-0230-48c6-8403-bb353a3ca122)
 
 Обязательно нажимаем звезду - это поможет понять скольким людям я помог. Пользуйтесь на здоровье!!!
