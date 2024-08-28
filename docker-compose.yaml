@@ -63,7 +63,7 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
-      - "7071:7071"  # Порт для JMX Exporter
+      - "7072:7072"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
     restart: always
@@ -88,7 +88,7 @@ services:
     ports:
       - "9093:9093"
       - "29093:29093"
-      - "7072:7072"  # Порт для JMX Exporter
+      - "7073:7073"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
     restart: always
@@ -113,7 +113,7 @@ services:
     ports:
       - "9094:9094"
       - "29094:29094"
-      - "7073:7073"  # Порт для JMX Exporter
+      - "7074:7074"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
     restart: always
