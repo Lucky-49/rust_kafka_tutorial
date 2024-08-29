@@ -1,5 +1,6 @@
 use rdkafka::{ClientConfig, Message};
 use rdkafka::consumer::{CommitMode, Consumer, StreamConsumer};
+use tokio_stream::StreamExt;
 
 #[tokio::main]
 async fn main() {
@@ -22,7 +23,8 @@ fn create_consumer() -> StreamConsumer {
 }
 
 async fn consume(consumer: &StreamConsumer) {
-    consumer.subscribe(&["test-topic-3"]).expect("не удалось подписаться на топик");
+    let topic_name = "test-topic-4";
+    consumer.subscribe(&[topic_name]).expect("не удалось подписаться на топик");
 
     let mut message_stream = consumer.stream();
 

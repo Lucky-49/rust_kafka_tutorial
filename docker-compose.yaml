@@ -59,7 +59,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7071:/usr/share/jmx_exporter/kafka.yml"
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7072:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -84,7 +84,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7072:/usr/share/jmx_exporter/kafka.yml"
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7073:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9093:9093"
       - "29093:29093"
@@ -109,13 +109,25 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7073:/usr/share/jmx_exporter/kafka.yml"
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7074:/usr/share/jmx_exporter/kafka.yml"
     ports:
       - "9094:9094"
       - "29094:29094"
       - "7074:7074"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
+    restart: always
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    environment:
+      KAFKA_BROKER_CONNECT: "kafka1:9092,kafka2:9093,kafka3:9094"
+    ports:
+      - "9000:9000"
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
     restart: always
 
   kafka-exporter:
