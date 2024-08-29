@@ -1,4 +1,13 @@
-Это полностью рабочий пример для создания кластеров Zookeeper и Kafka.
+Это полностью рабочий пример для создания кластеров Zookeeper и Kafka (ОС Windows).
+
+Возможно, Вам потребуется настроить своё окружение: необходимо наличие CMake, GCC или Clang, Make, pkg-config.
+
+Проверка:
+cmake --version
+gcc --version
+clang --version
+make --version
+pkg-config --version
 
 Настроен Prometheus на сбор метрик с Kafka.
 
