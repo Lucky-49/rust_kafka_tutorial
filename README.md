@@ -4,14 +4,7 @@
 
 Проверка:
 
-cmake --version
-gcc --version
-
-clang --version
-
-make --version
-
-pkg-config --version
+cmake --version, gcc --version, clang --version, make --version, pkg-config --version
 
 
 Настроен Prometheus на сбор метрик с Kafka.
