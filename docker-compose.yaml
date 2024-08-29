@@ -119,7 +119,7 @@ services:
     restart: always
 
   kafdrop:
-    image: obsidiandynamics/kafdrop
+    image: obsidiandynamics/kafdrop:4.0.2
     environment:
       KAFKA_BROKER_CONNECT: "kafka1:9092,kafka2:9093,kafka3:9094"
     ports:

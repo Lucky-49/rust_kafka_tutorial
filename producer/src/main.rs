@@ -32,8 +32,9 @@ pub fn create_producer() -> FutureProducer {
 }
 
 pub async fn produce(producer: &FutureProducer, topic: &str, msg: &str) {
-        let record = FutureRecord::<(), str>::to(topic)
-            .payload(msg);
+        let record = FutureRecord::to(topic)
+            .payload(msg)
+            .key("my_key");
 
         match producer.send(record, Duration::from_secs(0)).await {
             Ok(report) => println!("Отправлено сообщение {:?}", report),

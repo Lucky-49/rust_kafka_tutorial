@@ -1,3 +1,4 @@
+#В этом файле прописываются правила по которым происходит сбор метрик (какие метрики будут собраны)
 lowercaseOutputName: true
 lowercaseOutputLabelNames: true
 
