@@ -5,7 +5,6 @@
 Проверка:
 
 cmake --version
-
 gcc --version
 
 clang --version
