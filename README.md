@@ -4,15 +4,21 @@
 
 Настроена Grafana на работу с Prometheus. 
 
+Настроен Kafdrop для мониторинга и управления кластерами Kafka 
+
 Всё запускается в контейнере командой docker-compose up -d
 
-Перед сборкой необходимо скачать JMX Prometheus Java Agent c https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/
+Перед сборкой необходимо скачать JMX Prometheus Java Agent c https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/ файл jmx_prometheus_javaagent-1.0.1.jar (или более поздней версии).
 
 В проекте создаём папку jmx_exporter и туда помещаем файл jmx_prometheus_javaagent-1.0.1.jar (версия может быть, к примеру, 1.0.2)
 
 Producer и Consumer запускается в отдельных терминалах, каждый из своей директории cargo run, перед настройкой Grafana.
 
+Prometheus просматривается на 127.0.0.1:9090
+
 Grafana просматривается на 127.0.0.1:3000
+
+Kafdrop просматривается на 127.0.0.1:9000
 
 При первом замуске Grafana вводим username/password admin/admin. Будет предложена смена пароля. Далее
 ![image](https://github.com/user-attachments/assets/305e3b11-097b-48ac-943c-ed2c0abd33c9)
