@@ -1,187 +1,123 @@
-version: '3'
+version: "3.8"
 
 services:
-  zookeeper1:
-    image: confluentinc/cp-zookeeper:7.7.0
-    container_name: zookeeper1
-    ports:
-      - "2281:2281"
-    environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_SECURE_CLIENT_PORT: 2281
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
-      ZOOKEEPER_SSL_KEYSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper1.keystore.jks
-      ZOOKEEPER_SSL_KEYSTORE_PASSWORD: changeit
-      ZOOKEEPER_SSL_TRUSTSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper1.truststore.jks
-      ZOOKEEPER_SSL_TRUSTSTORE_PASSWORD: changeit
-      ZOOKEEPER_SERVER_CNXN_FACTORY: org.apache.zookeeper.server.NettyServerCnxnFactory
-    volumes:
-      - ./secrets/zookeeper1:/etc/zookeeper/secrets
-    restart: always
-
-  zookeeper2:
-    image: confluentinc/cp-zookeeper:7.7.0
-    container_name: zookeeper2
-    ports:
-      - "2282:2281"
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_SECURE_CLIENT_PORT: 2281
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
-      ZOOKEEPER_SSL_KEYSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper2.keystore.jks
-      ZOOKEEPER_SSL_KEYSTORE_PASSWORD: changeit
-      ZOOKEEPER_SSL_TRUSTSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper2.truststore.jks
-      ZOOKEEPER_SSL_TRUSTSTORE_PASSWORD: changeit
-      ZOOKEEPER_SERVER_CNXN_FACTORY: org.apache.zookeeper.server.NettyServerCnxnFactory
-    volumes:
-      - ./secrets/zookeeper2:/etc/zookeeper/secrets
-    restart: always
-
-  zookeeper3:
-    image: confluentinc/cp-zookeeper:7.7.0
-    container_name: zookeeper3
-    ports:
-      - "2283:2281"
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_SECURE_CLIENT_PORT: 2281
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper1:2888:3888;zookeeper2:2888:3888;zookeeper3:2888:3888
-      ZOOKEEPER_SSL_KEYSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper3.keystore.jks
-      ZOOKEEPER_SSL_KEYSTORE_PASSWORD: changeit
-      ZOOKEEPER_SSL_TRUSTSTORE_LOCATION: /etc/zookeeper/secrets/zookeeper3.truststore.jks
-      ZOOKEEPER_SSL_TRUSTSTORE_PASSWORD: changeit
-      ZOOKEEPER_SERVER_CNXN_FACTORY: org.apache.zookeeper.server.NettyServerCnxnFactory
-    volumes:
-      - ./secrets/zookeeper3:/etc/zookeeper/secrets
-    restart: always
-
   kafka1:
-    image: confluentinc/cp-kafka:7.7.0
+    image: bitnami/kafka:3.8
     container_name: kafka1
-    depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
+    ports:
+      - "9092:9092"
+      - "7072:7072"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2281,zookeeper2:2281,zookeeper3:2281
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka1:9092,SSL_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL,SSL_HOST:SSL
-      KAFKA_INTER_BROKER_LISTENER_NAME: SSL
-      KAFKA_SSL_KEYSTORE_FILENAME: kafka1.keystore.jks
-      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka1.keystore.jks
-      KAFKA_SSL_KEYSTORE_CREDENTIALS: keystore_creds
-      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
-      KAFKA_SSL_KEY_CREDENTIALS: key_creds
-      KAFKA_SSL_KEY_PASSWORD: changeit
-      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka1.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka1.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9090,EXTERNAL://host.docker.internal:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7072:/usr/share/jmx_exporter/kafka.yml"
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-      - "7072:7072"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
-      - ./secrets/kafka1:/etc/kafka/secrets
+      - ./kraft/server1/:/bitnami/kafka
     restart: always
 
   kafka2:
-    image: confluentinc/cp-kafka:7.7.0
+    image: bitnami/kafka:3.8
     container_name: kafka2
-    depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
+    ports:
+      - "9093:9093"
+      - "7073:7073"
     environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka2:9093,SSL_HOST://localhost:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL,SSL_HOST:SSL
-      KAFKA_INTER_BROKER_LISTENER_NAME: SSL
-      KAFKA_SSL_KEYSTORE_FILENAME: kafka2.keystore.jks
-      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka2.keystore.jks
-      KAFKA_SSL_KEYSTORE_CREDENTIALS: keystore_creds
-      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
-      KAFKA_SSL_KEY_CREDENTIALS: key_creds
-      KAFKA_SSL_KEY_PASSWORD: changeit
-      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka2.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka2.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_CFG_NODE_ID: 2
+      KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9090,EXTERNAL://host.docker.internal:9093
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7073:/usr/share/jmx_exporter/kafka.yml"
-    ports:
-      - "9093:9093"
-      - "29093:29093"
-      - "7073:7073"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
-      - ./secrets/kafka2:/etc/kafka/secrets
+      - ./kraft/server2/:/bitnami/kafka
     restart: always
 
   kafka3:
-    image: confluentinc/cp-kafka:7.7.0
+    image: bitnami/kafka:3.8
     container_name: kafka3
-    depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
+    ports:
+      - "9094:9094"
+      - "7074:7074"
     environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka3:9094,SSL_HOST://localhost:29094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL,SSL_HOST:SSL
-      KAFKA_INTER_BROKER_LISTENER_NAME: SSL
-      KAFKA_SSL_KEYSTORE_FILENAME: kafka3.keystore.jks
-      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka3.keystore.jks
-      KAFKA_SSL_KEYSTORE_CREDENTIALS: keystore_creds
-      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
-      KAFKA_SSL_KEY_CREDENTIALS: key_creds
-      KAFKA_SSL_KEY_PASSWORD: changeit
-      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka3.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka3.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_CFG_NODE_ID: 3
+      KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9090,EXTERNAL://host.docker.internal:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7074:/usr/share/jmx_exporter/kafka.yml"
-    ports:
-      - "9094:9094"
-      - "29094:29094"
-      - "7074:7074"  # Порт для JMX Exporter
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
-      - ./secrets/kafka3:/etc/kafka/secrets
+      - ./kraft/server3/:/bitnami/kafka
     restart: always
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop:4.0.2
-    environment:
-      KAFKA_BROKER_CONNECT: "kafka1:9092,kafka2:9093,kafka3:9094"
+  kafka4:
+    image: bitnami/kafka:3.8
+    container_name: kafka4
     ports:
-      - "9000:9000"
+      - "9095:9095"
+      - "7075:7075"
+    environment:
+      KAFKA_CFG_NODE_ID: 4
+      KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9095
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka4:9090,EXTERNAL://host.docker.internal:9095
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7075:/usr/share/jmx_exporter/kafka.yml"
+    volumes:
+      - ./jmx_exporter:/usr/share/jmx_exporter
+      - ./kraft/server4/:/bitnami/kafka
+    restart: always
+
+  akhq:
+    image: tchiotludo/akhq:0.25.1
+    container_name: UI_for_Kafka
+    ports:
+      - "8080:8080"  # Порт для доступа к UI
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            kafka:
+              properties:
+                bootstrap.servers: "kafka1:9092,kafka2:9093,kafka3:9094,kafka4:9095"
     depends_on:
       - kafka1
       - kafka2
       - kafka3
+      - kafka4
     restart: always
 
   kafka-exporter:
@@ -191,10 +127,11 @@ services:
       - "--kafka.server=kafka1:9092"
       - "--kafka.server=kafka2:9093"
       - "--kafka.server=kafka3:9094"
+      - "--kafka.server=kafka4:9095"
     ports:
       - "9308:9308"
     environment:
-      KAFKA_SERVER: "kafka1:9092,kafka2:9093,kafka3:9094" # Адреса Kafka-брокера
+      KAFKA_SERVER: "kafka1:9092,kafka2:9093,kafka3:9094,kafka4:9095" # Адреса Kafka-брокера
     restart: always
 
   prometheus:

@@ -7,7 +7,7 @@ use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
-    let topic_name = "test-topic-4";
+    let topic_name = "test-topic";
     create_topic(topic_name, 3, 3).await;
 
     let producer = create_producer();
@@ -29,7 +29,7 @@ fn create_producer() -> FutureProducer {
     ClientConfig::new()
         .set(
             "bootstrap.servers",
-            "localhost:29092, localhost:29093, localhost:29094",
+            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094, host.docker.internal:9095",
         )
         .set("acks", "all")
         .set("retries", "5")
@@ -52,7 +52,7 @@ async fn create_topic(topic_name: &str, quantity_partitions: i32, replication_fa
     let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
         .set(
             "bootstrap.servers",
-            "localhost:29092,localhost:29093,localhost:29094",
+            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094, host.docker.internal:9095",
         )
         .create()
         .expect("Не удалось создать админ клиента");
