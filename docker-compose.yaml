@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   kafka1:
-    image: bitnami/kafka:3.8
+    image: bitnami/kafka:3.8.0
     container_name: kafka1
     ports:
       - "9092:9092"
@@ -11,23 +11,33 @@ services:
       KAFKA_CFG_NODE_ID: 1
       KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
       KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9090,EXTERNAL://host.docker.internal:9092
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091'
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9091,SSL://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: SSL://kafka1:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,SSL:SSL
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_CFG_SSL_KEYSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_TRUSTSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_KEY_PASSWORD: changeit
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_TLS_TYPE: JKS
+      ALLOW_PLAINTEXT_LISTENER: no
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7072:/usr/share/jmx_exporter/kafka.yml"
+      #KAFKA_OPTS: "-Djavax.net.debug=ssl,handshake"
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
       - ./kraft/server1/:/bitnami/kafka
+      - ./secrets/kafka1:/bitnami/kafka/config/certs
     restart: always
 
   kafka2:
-    image: bitnami/kafka:3.8
+    image: bitnami/kafka:3.8.0
     container_name: kafka2
     ports:
       - "9093:9093"
@@ -36,23 +46,33 @@ services:
       KAFKA_CFG_NODE_ID: 2
       KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
       KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9093
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9090,EXTERNAL://host.docker.internal:9093
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091'
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9091,SSL://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: SSL://kafka2:9093
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,SSL:SSL
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_CFG_SSL_KEYSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_TRUSTSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_KEY_PASSWORD: changeit
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_TLS_TYPE: JKS
+      ALLOW_PLAINTEXT_LISTENER: no
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7073:/usr/share/jmx_exporter/kafka.yml"
+      #KAFKA_OPTS: "-Djavax.net.debug=ssl,handshake"
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
       - ./kraft/server2/:/bitnami/kafka
+      - ./secrets/kafka2:/bitnami/kafka/config/certs
     restart: always
 
   kafka3:
-    image: bitnami/kafka:3.8
+    image: bitnami/kafka:3.8.0
     container_name: kafka3
     ports:
       - "9094:9094"
@@ -61,49 +81,34 @@ services:
       KAFKA_CFG_NODE_ID: 3
       KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
       KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9094
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9090,EXTERNAL://host.docker.internal:9094
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091'
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9091,SSL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: SSL://kafka3:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,SSL:SSL
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_CFG_SSL_KEYSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_TRUSTSTORE_LOCATION: /bitnami/kafka/config/certs/kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_CFG_SSL_KEY_PASSWORD: changeit
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_TLS_TYPE: JKS
+      ALLOW_PLAINTEXT_LISTENER: no
       KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7074:/usr/share/jmx_exporter/kafka.yml"
+      #KAFKA_OPTS: "-Djavax.net.debug=ssl,handshake"
     volumes:
       - ./jmx_exporter:/usr/share/jmx_exporter
       - ./kraft/server3/:/bitnami/kafka
-    restart: always
-
-  kafka4:
-    image: bitnami/kafka:3.8
-    container_name: kafka4
-    ports:
-      - "9095:9095"
-      - "7075:7075"
-    environment:
-      KAFKA_CFG_NODE_ID: 4
-      KAFKA_KRAFT_CLUSTER_ID: PVjHlx7ESeesq55jeB6Efw
-      KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9091,2@kafka2:9091,3@kafka3:9091,4@kafka4:9091'
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9095
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka4:9090,EXTERNAL://host.docker.internal:9095
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OPTS: "-javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar=7075:/usr/share/jmx_exporter/kafka.yml"
-    volumes:
-      - ./jmx_exporter:/usr/share/jmx_exporter
-      - ./kraft/server4/:/bitnami/kafka
+      - ./secrets/kafka3:/bitnami/kafka/config/certs
     restart: always
 
   akhq:
     image: tchiotludo/akhq:0.25.1
-    container_name: UI_for_Kafka
+    container_name: akhq  #UI for Kafka
     ports:
       - "8080:8080"  # Порт для доступа к UI
     environment:
@@ -112,12 +117,19 @@ services:
           connections:
             kafka:
               properties:
-                bootstrap.servers: "kafka1:9092,kafka2:9093,kafka3:9094,kafka4:9095"
+                bootstrap.servers: "kafka1:9092,kafka2:9093,kafka3:9094"
+                security.protocol: SSL
+                ssl.truststore.location: /certs/truststore.jks
+                ssl.truststore.password: changeit
+                ssl.keystore.location: /certs/akhq.keystore.jks
+                ssl.keystore.password: changeit
+                ssl.key.password: changeit
+    volumes:
+      - ./secrets/akhq:/certs
     depends_on:
       - kafka1
       - kafka2
       - kafka3
-      - kafka4
     restart: always
 
   kafka-exporter:
@@ -127,11 +139,16 @@ services:
       - "--kafka.server=kafka1:9092"
       - "--kafka.server=kafka2:9093"
       - "--kafka.server=kafka3:9094"
-      - "--kafka.server=kafka4:9095"
+      - "--tls.enabled"
+      - "--tls.ca-file=/certs/chain.crt"
+      - "--tls.cert-file=/certs/kafka_exporter.crt"
+      - "--tls.key-file=/certs/kafka_exporter.key"
     ports:
       - "9308:9308"
     environment:
-      KAFKA_SERVER: "kafka1:9092,kafka2:9093,kafka3:9094,kafka4:9095" # Адреса Kafka-брокера
+      KAFKA_SERVER: "kafka1:9092,kafka2:9093,kafka3:9094" # Адреса Kafka-брокера
+    volumes:
+      - ./secrets/kafka_exporter:/certs
     restart: always
 
   prometheus:
