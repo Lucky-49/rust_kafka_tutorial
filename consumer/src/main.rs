@@ -43,15 +43,13 @@ async fn consume(consumer: &StreamConsumer) {
     }
 
     let mut message_stream = consumer.stream();
-println!("продолжаем1");
     while let Some(message) = message_stream.next().await {
-        println!("продолжаем2");
 
         match message {
             Ok(msg) => {
                 if let Some(payload) = msg.payload_view::<str>() {
                     match payload {
-                        Ok(text) => println!("Консьюмер получил сообщение {}", text),
+                        Ok(text) => println!("Консюмер получил сообщение {}", text),
                         Err(e) => println!("Ошибка десириализации сообщения консьюмером {:?}", e),
                     }
                 } else {

@@ -11,7 +11,7 @@ async fn main() {
     create_topic(topic_name, 3, 3).await;
 
     let producer = create_producer();
-    let mut counter = 0;
+    let mut counter = -1;
 
     loop {
         counter += 1;
