@@ -1,10 +1,12 @@
 Это рабочий пример для создания защищенного по SSL/TLS кластера Kafka (Kraft - без zookeepr) (ОС Windows).
 
+(WARNING!!! Если Вы хотите собрать проект после 16.05.2025 года, необходимо пересоздать все сертификаты и ключи)
+
 Возможно, Вам потребуется настроить своё окружение: необходимо наличие CMake, GCC или Clang, Make, pkg-config, OpenSSL.
 
 Проверка: cmake --version, gcc --version, clang --version, make --version, pkg-config --version, openssl --version
 
-
+09.
 Настроен Prometheus на сбор метрик с Kafka.
 
 Настроена Grafana на работу с Prometheus. 
