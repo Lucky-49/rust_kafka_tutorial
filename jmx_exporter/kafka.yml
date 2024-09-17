@@ -2,6 +2,13 @@
 lowercaseOutputName: true
 lowercaseOutputLabelNames: true
 
+#ssl: true
+#sslKeyStorePath: /bitnami/kafka/config/certs/kafka_exporter.keystore.jks
+#sslKeyStorePassword: changeit
+#sslTrustStorePath: /bitnami/kafka/config/certs/kafka_exporter.truststore.jks
+#sslTrustStorePassword: changeit
+#ssl.need.client.auth: true
+
 rules:
   - pattern: "kafka.server<type=(.+), name=(.+)PerSec\\d*><>Count"
     name: "kafka_server_$1_$2_total"

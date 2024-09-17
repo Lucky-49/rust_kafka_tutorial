@@ -34,5 +34,10 @@ scrape_configs:
       - targets: ['kafka_exporter:9308']
 
   - job_name: 'kafka-jmx'
+    #scheme: https
+    #tls_config:
+     # ca_file: ./secrets/prometheus/chain.crt
+      #cert_file: ./secrets/prometheus/prometheus.crt
+      #key_file: ./secrets/prometheus/prometheus.key
     static_configs:
       - targets: ['kafka1:7072','kafka2:7073','kafka3:7074']
