@@ -13,10 +13,20 @@ fn create_consumer() -> StreamConsumer {
     ClientConfig::new()
         .set(
             "bootstrap.servers",
-            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094, host.docker.internal:9095",
+            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094",
         )
         .set("group.id", "test-group")
         .set("auto.offset.reset", "earliest")
+        .set("security.protocol", "ssl")
+        //.set("ssl.ca.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/chain.crt")
+        .set("ssl.ca.location", "/app/consumer/chain.crt")
+        //.set("ssl.certificate.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.crt")
+        .set("ssl.certificate.location", "/app/consumer/consumer.crt")
+        //.set("ssl.key.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.key")
+        .set("ssl.key.location", "/app/consumer/consumer.key")
+        .set("ssl.key.password", "changeit")
+        .set("ssl.endpoint.identification.algorithm", "none")
+        .set("debug", "security,broker,protocol")
         .create()
         .expect("Ошибка в create_consumer")
 }

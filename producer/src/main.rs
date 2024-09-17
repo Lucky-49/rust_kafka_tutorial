@@ -21,7 +21,7 @@ async fn main() {
             format!("Test message {}", counter).as_str(),
         )
         .await;
-        sleep(Duration::from_secs(2));
+        sleep(Duration::from_secs(1));
     }
 }
 
@@ -29,12 +29,22 @@ fn create_producer() -> FutureProducer {
     ClientConfig::new()
         .set(
             "bootstrap.servers",
-            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094, host.docker.internal:9095",
+            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094",
         )
         .set("acks", "all")
         .set("retries", "5")
         .set("reconnect.backoff.ms", "500")
         .set("reconnect.backoff.max.ms", "5000")
+        .set("security.protocol", "ssl")
+        //.set("ssl.ca.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/chain.crt")
+        .set("ssl.ca.location", "/app/producer/chain.crt")
+        //.set("ssl.certificate.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.crt")
+        .set("ssl.certificate.location", "/app/producer/producer.crt")
+        //.set("ssl.key.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.key")
+        .set("ssl.key.location", "/app/producer/producer.key")
+        .set("ssl.key.password", "changeit")
+        .set("ssl.endpoint.identification.algorithm", "none")
+        .set("debug", "security,broker,protocol")
         .create()
         .expect("Ошибка в create_producer")
 }
@@ -52,8 +62,18 @@ async fn create_topic(topic_name: &str, quantity_partitions: i32, replication_fa
     let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
         .set(
             "bootstrap.servers",
-            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094, host.docker.internal:9095",
+            "host.docker.internal:9092, host.docker.internal:9093, host.docker.internal:9094",
         )
+        .set("security.protocol", "ssl")
+        //.set("ssl.ca.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/chain.crt")
+        .set("ssl.ca.location", "/app/producer/chain.crt")
+        //.set("ssl.certificate.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.crt")
+        .set("ssl.certificate.location", "/app/producer/producer.crt")
+        //.set("ssl.key.location", "C:/Users/Lucky/RustroverProjects/test_kafka/secrets/producer/producer.key")
+        .set("ssl.key.location", "/app/producer/producer.key")
+        .set("ssl.key.password", "changeit")
+        .set("ssl.endpoint.identification.algorithm", "none")
+        .set("debug", "security,broker,protocol")
         .create()
         .expect("Не удалось создать админ клиента");
 
