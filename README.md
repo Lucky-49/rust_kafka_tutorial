@@ -1,8 +1,8 @@
-Это полностью рабочий пример для создания кластера Kafka (Kraft - без zookeepr) (ОС Windows).
+Это рабочий пример для создания защищенного по SSL/TLS кластера Kafka (Kraft - без zookeepr) (ОС Windows).
 
-Возможно, Вам потребуется настроить своё окружение: необходимо наличие CMake, GCC или Clang, Make, pkg-config.
+Возможно, Вам потребуется настроить своё окружение: необходимо наличие CMake, GCC или Clang, Make, pkg-config, OpenSSL.
 
-Проверка: cmake --version, gcc --version, clang --version, make --version, pkg-config --version
+Проверка: cmake --version, gcc --version, clang --version, make --version, pkg-config --version, openssl --version
 
 
 Настроен Prometheus на сбор метрик с Kafka.
@@ -13,17 +13,22 @@
 
 Всё запускается в контейнере командой docker-compose up -d
 
-Перед сборкой необходимо скачать JMX Prometheus Java Agent c https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/ файл jmx_prometheus_javaagent-1.0.1.jar (или более поздней версии).
+Перед сборкой необходимо:
+
+1. Скачать JMX Prometheus Java Agent c https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/ файл jmx_prometheus_javaagent-1.0.1.jar (или более поздней версии).
 
 В проекте создаём папку jmx_exporter и туда помещаем файл jmx_prometheus_javaagent-1.0.1.jar (версия может быть, к примеру, 1.0.2)
 
-Producer и Consumer запускается в отдельных терминалах, каждый из своей директории cargo run, перед настройкой Grafana.
+2. Создать ключи и сертификаты в соответствии с инструкцией (Create keys for SSL.docx)
+3. Разместить ключи и сертификаты в соответствии со структурой проекта
 
 Prometheus просматривается на 127.0.0.1:9090
 
 Grafana просматривается на 127.0.0.1:3000
 
 UI for Apache Kafka просматривается на 127.0.0.1:8080
+
+WARNING!!! Проты по которым Вы будете подключаться к Prometheus, Grafana и UI for Apache Kafka не защищены!!!
 
 При первом замуске Grafana вводим username/password admin/admin. Будет предложена смена пароля. Далее
 ![image](https://github.com/user-attachments/assets/305e3b11-097b-48ac-943c-ed2c0abd33c9)
